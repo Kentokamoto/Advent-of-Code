@@ -1,10 +1,9 @@
 use std::io::{BufRead, BufReader};
 use std::fs::File;
 
-fn part1(depths: Vec<i64>){
+fn part1(depths: &Vec<i64>){
     println!("Part 1");
     let mut prev = depths[0];
-    println!("First number: {}", prev);
     let mut count : u16 = 0;
 
     for index in 1..depths.len(){
@@ -19,6 +18,20 @@ fn part1(depths: Vec<i64>){
     println!("End of Part1");
 }
 
+fn part2(depths: &Vec<i64>){
+    println!("Part 2");
+    let mut prev_sum = depths[0] + depths[1] + depths[2];
+    let mut count : u16 = 0;
+    for index in 1..(depths.len()-2){
+        let curr_sum = depths[index] + depths[index+1]+ depths[index+2];
+        if curr_sum > prev_sum {
+            count += 1;
+        }
+        prev_sum = curr_sum;
+    }
+    println!("Part 2 Answer: {}", count);
+    println!("End of Part 2");
+}
 
 fn main() {
     println!("Opening and reading file");
@@ -30,5 +43,6 @@ fn main() {
                                 .collect();
 
     println!("Number of lines: {}\n", lines.len());
-    part1(lines);
+    part1(&lines);
+    part2(&lines);
 }
