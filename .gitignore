@@ -8,4 +8,4 @@ target/
 Cargo.lock
 
 # Input Files
-input*.txt
+input
