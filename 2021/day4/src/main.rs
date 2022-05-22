@@ -1,20 +1,21 @@
 use std::fs::File;
 use std::io::stdin;
-use std::io::{BufRead, BufReader, SeekFrom};
+use std::io::{BufRead, BufReader};
+use std::fmt;
 
 fn part1(lines: &Vec<i64>) {}
 fn part2(lines: &Vec<i64>) {}
 struct BingoBoard {
     board: Vec<Vec<i32>>,
 }
-
-impl BingoBoard {
-    fn as_string(&self) {
-        println!("{{");
-        for row in &self.board {
-            println!("{:?}", row);
+impl fmt::Display for BingoBoard{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{{\n")?;
+        for row in &self.board{
+            write!(f, "{:?}\n", row)?;
         }
-        println!("}}");
+        write!(f, "}}")?;
+        Ok(())
     }
 }
 fn main() -> std::io::Result<()> {
@@ -60,7 +61,7 @@ fn main() -> std::io::Result<()> {
     let temp = BingoBoard { board: temp_board };
     bingo_boards.push(temp);
     for board in bingo_boards {
-        board.as_string();
+        println!("{:#}", board);
     }
     Ok(())
 }
