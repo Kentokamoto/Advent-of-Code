@@ -1,41 +1,68 @@
+use std::collections::HashSet;
+use std::fmt;
 use std::fs::File;
 use std::io::stdin;
 use std::io::{BufRead, BufReader};
-use std::fmt;
 
-fn part1(guesses: &mut Vec<String>, bingo_boards: &Vec<BingoBoard>) {
+fn part1(guesses: &Vec<String>, bingo_boards: &Vec<BingoBoard>) {
+    println!("Part 1");
     let mut board_copy = bingo_boards.clone();
-    for guess in guesses{
-        println!("Current Guess: {}", guess);
-        for b in &mut board_copy{
+    for guess in guesses {
+        for b in &mut board_copy {
             let mut row = 0;
             let mut col = 0;
             if b.has_value(guess, &mut row, &mut col) {
-                println!("Found at {}, {} on board: \n{}", row, col, b);
                 b.mark_board(&row, &col);
-                if b.is_bingo(&row, &col){
+                if b.is_bingo(&row, &col) {
                     println!("Found Bingo: \n {}", b);
-                    println!("With latest guess being: {}", guess);
-                    println!("sum: {}", b.sum_unmarked());
-                    println!("final Score: {}", b.sum_unmarked()*guess.parse::<i32>().unwrap());
+                    println!(
+                        "final Score: {}",
+                        b.sum_unmarked() * guess.parse::<i32>().unwrap()
+                    );
                     return;
                 }
             }
         }
     }
-
 }
-fn part2(lines: &Vec<i64>) {}
+fn part2(guesses: &Vec<String>, bingo_boards: &Vec<BingoBoard>) {
+    println!("Part 2");
+    let mut board_copy = bingo_boards.clone();
+    let mut completed_board: HashSet<usize> = HashSet::new();
+    for guess in guesses {
+        for pos in 0..board_copy.len() {
+            if completed_board.contains(&pos) {
+                continue;
+            }
+            let mut row = 0;
+            let mut col = 0;
+            if board_copy[pos].has_value(guess, &mut row, &mut col) {
+                board_copy[pos].mark_board(&row, &col);
+                if board_copy[pos].is_bingo(&row, &col) {
+                    completed_board.insert(pos);
+                    if completed_board.len() == bingo_boards.len() {
+                        println!("Found lastBingo: \n {}", board_copy[pos]);
+                        println!(
+                            "final Score: {}",
+                            board_copy[pos].sum_unmarked() * guess.parse::<i32>().unwrap()
+                        );
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
 
 #[derive(Clone)]
 struct BingoBoard {
     board: Vec<Vec<String>>,
 }
 impl BingoBoard {
-    fn has_value(&self, val: &String, r: &mut usize, c: &mut usize) -> bool{
-        for row in 0..self.board.len(){
-            for col in 0..self.board[row].len(){
-                if self.board[row][col].eq(val){
+    fn has_value(&self, val: &String, r: &mut usize, c: &mut usize) -> bool {
+        for row in 0..self.board.len() {
+            for col in 0..self.board[row].len() {
+                if self.board[row][col].eq(val) {
                     *r = row;
                     *c = col;
                     return true;
@@ -44,16 +71,16 @@ impl BingoBoard {
         }
         false
     }
-    fn mark_board(&mut self, row: &usize, col: &usize){
-        if self.board[*row][*col].starts_with('x'){
-            return
+    fn mark_board(&mut self, row: &usize, col: &usize) {
+        if self.board[*row][*col].starts_with('x') {
+            return;
         }
         self.board[*row][*col] = String::from("x") + &self.board[*row][*col];
     }
-    fn is_bingo(&self, row:&usize, col: &usize) -> bool{
+    fn is_bingo(&self, row: &usize, col: &usize) -> bool {
         // Check Row:
         let mut bingo_in_row = true;
-        for col in &self.board[*row]{
+        for col in &self.board[*row] {
             if !col.starts_with("x") {
                 bingo_in_row = false;
                 break;
@@ -64,7 +91,7 @@ impl BingoBoard {
         }
         // Check Col:
         let mut bingo_in_col = true;
-        for r in 0..self.board.len(){
+        for r in 0..self.board.len() {
             if !self.board[r][*col].starts_with("x") {
                 bingo_in_col = false;
                 break;
@@ -75,24 +102,24 @@ impl BingoBoard {
         }
         false
     }
-    fn sum_unmarked(&self) -> i32{
+    fn sum_unmarked(&self) -> i32 {
         let mut sum = 0;
         for row in &self.board {
-            for col in row{
+            for col in row {
                 let val = col.parse::<i32>();
                 sum = match val {
                     Ok(val) => sum + val,
-                    Err(_) => sum
+                    Err(_) => sum,
                 }
             }
         }
         sum
     }
 }
-impl fmt::Display for BingoBoard{
+impl fmt::Display for BingoBoard {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{{\n")?;
-        for row in &self.board{
+        for row in &self.board {
             write!(f, "{:?}\n", row)?;
         }
         write!(f, "}}")?;
@@ -143,9 +170,9 @@ fn main() -> std::io::Result<()> {
     bingo_boards.push(temp);
 
     part1(&mut guesses, &mut bingo_boards);
-//    for board in bingo_boards {
-//        println!("{:#}", board);
-//    }
+    println!("");
+    part2(&mut guesses, &mut bingo_boards);
+
     Ok(())
 }
 // --------------------------------------------------------------------------
