@@ -11,16 +11,17 @@ fn part1(guesses: &Vec<String>, bingo_boards: &Vec<BingoBoard>) {
         for b in &mut board_copy {
             let mut row = 0;
             let mut col = 0;
-            if b.has_value(guess, &mut row, &mut col) {
-                b.mark_board(&row, &col);
-                if b.is_bingo(&row, &col) {
-                    println!("Found Bingo: \n {}", b);
-                    println!(
-                        "final Score: {}",
-                        b.sum_unmarked() * guess.parse::<i32>().unwrap()
-                    );
-                    return;
-                }
+            if !b.has_value(guess, &mut row, &mut col) {
+                continue;
+            }
+            b.mark_board(&row, &col);
+            if b.is_bingo(&row, &col) {
+                println!("Found Bingo: \n {}", b);
+                println!(
+                    "final Score: {}",
+                    b.sum_unmarked() * guess.parse::<i32>().unwrap()
+                );
+                return;
             }
         }
     }
@@ -36,19 +37,21 @@ fn part2(guesses: &Vec<String>, bingo_boards: &Vec<BingoBoard>) {
             }
             let mut row = 0;
             let mut col = 0;
-            if board_copy[pos].has_value(guess, &mut row, &mut col) {
-                board_copy[pos].mark_board(&row, &col);
-                if board_copy[pos].is_bingo(&row, &col) {
-                    completed_board.insert(pos);
-                    if completed_board.len() == bingo_boards.len() {
-                        println!("Found lastBingo: \n {}", board_copy[pos]);
-                        println!(
-                            "final Score: {}",
-                            board_copy[pos].sum_unmarked() * guess.parse::<i32>().unwrap()
-                        );
-                        return;
-                    }
-                }
+            if !board_copy[pos].has_value(guess, &mut row, &mut col) {
+                continue;
+            }
+            board_copy[pos].mark_board(&row, &col);
+            if !board_copy[pos].is_bingo(&row, &col) {
+                continue;
+            }
+            completed_board.insert(pos);
+            if completed_board.len() == bingo_boards.len() {
+                println!("Found lastBingo: \n {}", board_copy[pos]);
+                println!(
+                    "final Score: {}",
+                    board_copy[pos].sum_unmarked() * guess.parse::<i32>().unwrap()
+                );
+                return;
             }
         }
     }
