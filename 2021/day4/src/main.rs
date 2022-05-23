@@ -13,6 +13,13 @@ fn part1(guesses: &mut Vec<String>, bingo_boards: &Vec<BingoBoard>) {
             if b.has_value(guess, &mut row, &mut col) {
                 println!("Found at {}, {} on board: \n{}", row, col, b);
                 b.mark_board(&row, &col);
+                if b.is_bingo(&row, &col){
+                    println!("Found Bingo: \n {}", b);
+                    println!("With latest guess being: {}", guess);
+                    println!("sum: {}", b.sum_unmarked());
+                    println!("final Score: {}", b.sum_unmarked()*guess.parse::<i32>().unwrap());
+                    return;
+                }
             }
         }
     }
@@ -42,6 +49,44 @@ impl BingoBoard {
             return
         }
         self.board[*row][*col] = String::from("x") + &self.board[*row][*col];
+    }
+    fn is_bingo(&self, row:&usize, col: &usize) -> bool{
+        // Check Row:
+        let mut bingo_in_row = true;
+        for col in &self.board[*row]{
+            if !col.starts_with("x") {
+                bingo_in_row = false;
+                break;
+            }
+        }
+        if bingo_in_row {
+            return true;
+        }
+        // Check Col:
+        let mut bingo_in_col = true;
+        for r in 0..self.board.len(){
+            if !self.board[r][*col].starts_with("x") {
+                bingo_in_col = false;
+                break;
+            }
+        }
+        if bingo_in_col {
+            return true;
+        }
+        false
+    }
+    fn sum_unmarked(&self) -> i32{
+        let mut sum = 0;
+        for row in &self.board {
+            for col in row{
+                let val = col.parse::<i32>();
+                sum = match val {
+                    Ok(val) => sum + val,
+                    Err(_) => sum
+                }
+            }
+        }
+        sum
     }
 }
 impl fmt::Display for BingoBoard{
