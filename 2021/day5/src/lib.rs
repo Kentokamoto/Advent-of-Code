@@ -43,6 +43,9 @@ impl LineSegment{
         };
         Ok(output)
     }
+    pub fn isDiagonal(self) -> bool {
+        (self.start.x == self.end.x )||  ( self.start.y == self.end.y)
+    }
 }
 pub fn new(file_name: &String) -> Result<Vec<LineSegment>, &str>{
     let file = match File::open(&file_name.trim()) {
@@ -76,6 +79,31 @@ mod tests{
             }
         };
         assert_eq!(answer, ls);
+    }
+    #[test]
+    fn check_diagonals(){
+        let test1 = LineSegment {
+            start: Point {
+                x: 0,
+                y: 4
+            },
+            end: Point{
+                x: 4,
+                y: 0
+            }
+        };
+        assert_eq!(false, test1.isDiagonal());
+        let test2 = LineSegment {
+            start: Point {
+                x: 3,
+                y: 4
+            },
+            end: Point{
+                x: 1,
+                y: 4
+            }
+        };
+        assert_eq!(true, test2.isDiagonal());
     }
 }
 
