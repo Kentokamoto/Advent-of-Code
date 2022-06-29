@@ -1,29 +1,29 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-#[derive(Debug)]
+#[derive(Debug,Clone,Copy)]
 pub struct LanternFish {
-    timer: u32,
-    default: u32
+    pub timer: u32,
+    pub default: u32
 }
 
 impl LanternFish{
-    fn new(timer: u32, default: u32) -> LanternFish{
+    pub fn new(timer: u32, default: u32) -> LanternFish{
         LanternFish{
             timer: timer,
             default: default
         }
     }
 
-    fn decrement(&mut self){
+    pub fn decrement(&mut self){
         self.timer -= 1;
     }
 
-    fn reset(&mut self){
+    pub fn reset(&mut self){
         self.timer = self.default;
     }
 
-    fn time_to_spawn(&self) -> bool{
+    pub fn time_to_spawn(&self) -> bool{
         self.timer <=0 
     }
 }
@@ -38,7 +38,7 @@ pub fn new(file_name: &String) -> Result<Vec<LanternFish>, &str> {
 
     let mut output = Vec::new();
     let mut line = String::new();
-    let len = buf_reader.read_line(&mut line).unwrap();
+    buf_reader.read_line(&mut line).unwrap();
     let timers: Vec<&str> = line.split(",").collect();
     for timer in timers {
         output.push(LanternFish::new(timer.trim().parse::<u32>().unwrap(), 6));
