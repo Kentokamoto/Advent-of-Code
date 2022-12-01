@@ -1,9 +1,7 @@
 use day1::Elf;
-use std::{env, fs, io, result::Result};
+use std::{fs, io, result::Result};
 
 fn read_input() -> Result<String, Box<dyn std::error::Error>> {
-    let path = env::current_dir();
-
     println!("Enter a filename: ");
     let mut input = String::new();
     match io::stdin().read_line(&mut input) {
@@ -46,10 +44,20 @@ fn part1(input: &Vec<Elf>) -> i32 {
     }
     most_calories
 }
+
+fn part2(input: &mut Vec<Elf>) -> i32 {
+    input.sort_by(|a, b| a.get_total().cmp(&b.get_total()).reverse());
+    let thing = &input[0..3];
+    for t in thing {
+        println!("{}", t.get_total());
+    }
+    thing.iter().map(|x| x.get_total()).sum()
+}
 fn main() {
     let contents = read_input();
-    let elf_list = get_elf_list(&contents.unwrap());
-    let result1 = part1(&elf_list.unwrap());
-
+    let mut elf_list = get_elf_list(&contents.unwrap()).unwrap();
+    let result1 = part1(&elf_list);
+    let result2 = part2(&mut elf_list);
     println!("Part 1: {}", result1);
+    println!("Part 2: {}", result2);
 }
