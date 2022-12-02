@@ -20,7 +20,7 @@ fn read_input() -> Result<String, Box<dyn std::error::Error>> {
     return Ok(contents);
 }
 
-fn parse_input(input: &String) -> Result<Vec<Strategy>, Box<dyn std::error::Error>> {
+fn parse_input1(input: &String) -> Result<Vec<Strategy>, Box<dyn std::error::Error>> {
     let mut vec: Vec<Strategy> = Vec::new();
     for line in input.lines() {
         let moves: Vec<&str> = line.split_whitespace().collect();
@@ -31,12 +31,29 @@ fn parse_input(input: &String) -> Result<Vec<Strategy>, Box<dyn std::error::Erro
     Ok(vec)
 }
 
+fn parse_input2(input: &String) -> Result<Vec<Strategy2>, Box<dyn std::error::Error>> {
+    let mut vec: Vec<Strategy2> = Vec::new();
+    for line in input.lines() {
+        let moves: Vec<&str> = line.split_whitespace().collect();
+        let opponent = moves[0];
+        let me = moves[1];
+        vec.push(Strategy2::new(opponent, me));
+    }
+    Ok(vec)
+}
+
 fn part1(input: &Vec<Strategy>) -> i32 {
+    input.iter().map(|x| x.result()).sum()
+}
+fn part2(input: &Vec<Strategy2>) -> i32 {
     input.iter().map(|x| x.result()).sum()
 }
 fn main() {
     let contents = read_input();
-    let strat = parse_input(&contents.unwrap());
-    let result1 = part1(&strat.unwrap());
+    let strat1 = parse_input1(&contents.as_ref().unwrap());
+    let result1 = part1(&strat1.unwrap());
+    let strat2 = parse_input2(&contents.as_ref().unwrap());
+    let result2 = part2(&strat2.unwrap());
     println!("Result 1: {}", result1);
+    println!("Result 2: {}", result2);
 }
