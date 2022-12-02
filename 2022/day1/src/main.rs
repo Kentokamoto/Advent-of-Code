@@ -47,11 +47,8 @@ fn part1(input: &Vec<Elf>) -> i32 {
 
 fn part2(input: &mut Vec<Elf>) -> i32 {
     input.sort_by(|a, b| a.get_total().cmp(&b.get_total()).reverse());
-    let thing = &input[0..3];
-    for t in thing {
-        println!("{}", t.get_total());
-    }
-    thing.iter().map(|x| x.get_total()).sum()
+    let top_three = &input[0..3];
+    top_three.iter().map(|x| x.get_total()).sum()
 }
 fn main() {
     let contents = read_input();
