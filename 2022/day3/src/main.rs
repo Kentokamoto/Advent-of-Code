@@ -1,4 +1,4 @@
-use day3::Rucksack;
+use day3::{ElfGroup, Rucksack};
 use std::{fs, io, result::Result};
 
 fn read_input() -> Result<String, Box<dyn std::error::Error>> {
@@ -38,6 +38,22 @@ fn parse_input(contents: &String) -> Vec<Rucksack> {
     rucksacks
 }
 
+fn parse_elf_group(contents: &String) -> Vec<ElfGroup> {
+    let mut elf_groups = Vec::new();
+    let mut lines = contents.lines();
+    let mut line = lines.next();
+    while line != None {
+        let mut elf_group = ElfGroup::new();
+        for rucksack_num in 1..4 {
+            for c in line.unwrap().chars() {
+                elf_group.add_to_rucksack(&rucksack_num, c).unwrap();
+            }
+            line = lines.next();
+        }
+        elf_groups.push(elf_group);
+    }
+    elf_groups
+}
 fn part1(rucksacks: &Vec<Rucksack>) -> i32 {
     let mut total = 0;
     for rucksack in rucksacks {
@@ -52,9 +68,28 @@ fn part1(rucksacks: &Vec<Rucksack>) -> i32 {
     }
     total
 }
+
+fn part2(elfgroups: &Vec<ElfGroup>) -> i32 {
+    let mut total = 0;
+    for elf_group in elfgroups {
+        let c = elf_group.find_badge().unwrap();
+        if c.is_ascii_uppercase() {
+            // @ is the character before A in ascii
+            total += (c as i32) - ('@' as i32) + 26;
+        } else {
+            // ` is the character before a in ascii
+            total += (c as i32) - ('`' as i32);
+        }
+    }
+    total
+}
+
 fn main() {
     let contents = read_input();
-    let rucksacks = parse_input(&contents.unwrap());
+    let rucksacks = parse_input(&contents.as_ref().unwrap());
     let result1 = part1(&rucksacks);
+    let elf_groups = parse_elf_group(&contents.unwrap());
+    let result2 = part2(&elf_groups);
     println!("Result1: {}", result1);
+    println!("Result2: {}", result2);
 }
